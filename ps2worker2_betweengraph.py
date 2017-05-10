@@ -50,7 +50,7 @@ def main(_):
     # or an error occurs.
     with tf.train.MonitoredTrainingSession(master=server.target,
                                            is_chief=(FLAGS.task_index == 0),
-                                           checkpoint_dir="/home/node0_nfs_share/train_logs",
+                                           checkpoint_dir="/mywork/nfs_share/train_logs",
                                            hooks=hooks) as mon_sess:
       while not mon_sess.should_stop():
         # Run a training step asynchronously.
