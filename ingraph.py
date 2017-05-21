@@ -16,11 +16,11 @@ with tf.device("/job:canshu/task:0"):
 with tf.device("/job:canshu/task:1"):
     biases = tf.Variable(tf.zeros([1]))
 
-with tf.device("/job:gongzuo/ps:0"):
+with tf.device("/job:gongzuo/task:0"):
     y = Weights*x_data + biases
     loss = tf.reduce_mean(tf.square(y-y_data))
 
-with tf.device("/job:gongzuo/ps:1"):
+with tf.device("/job:gongzuo/task:1"):
     optimizer = tf.train.GradientDescentOptimizer(0.5)
     train = optimizer.minimize(loss)
     init = tf.global_variables_initializer()
@@ -37,13 +37,13 @@ with tf.device("/job:gongzuo/ps:1"):
 #local end--------------------------------
 
 ### create tensorflow structure end ###
-sess=tf.Session(server_target)
-sess.run(init)
+with tf.Session(server_target) as sess:
+    sess.run(init)
 
-for step in range(100):
-    sess.run(train)
-    if step % 20 == 0:
-        print(step, sess.run(Weights), sess.run(biases))
+    for step in range(1000):
+        sess.run(train)
+        if step % 20 == 0:
+            print(step, sess.run(Weights), sess.run(biases))
 
 endtime=datetime.now()
 print((endtime-starttime).seconds)
